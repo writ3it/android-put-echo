@@ -3,6 +3,8 @@ package pl.poznan.put.fc.putecho.wifi.scanner
 import android.app.IntentService
 import android.content.Intent
 import android.content.Context
+import android.net.wifi.ScanResult
+import android.support.v4.content.LocalBroadcastManager
 
 private const val ACTION_UPDATE = "pl.poznan.put.fc.putecho.wifi.scanner.action.UPDATE"
 
@@ -37,7 +39,11 @@ class ScannerService : IntentService("ScannerService") {
     }
 
     private fun scan() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val scanResults = device.Scan()
+        val localIntent = Intent(BROADCAST_LIST_ACTION).apply {
+            putExtra(SCANNER_RESULT_LIST,scanResults)
+        }
+        LocalBroadcastManager.getInstance(baseContext).sendBroadcast(localIntent)
     }
 
     private fun enableWifi() {
@@ -48,6 +54,9 @@ class ScannerService : IntentService("ScannerService") {
 
 
     companion object {
+        const val BROADCAST_LIST_ACTION = "pl.poznan.put.fc.putecho.wifi.scanner.action.BROADCAST"
+        const val SCANNER_RESULT_LIST = "pl.poznan.put.fc.putecho.wifi.scanner.action.UPDATE.RESULT"
+        const val EMPTY_RESULT = ArrayList<ScanResult>(0)
         /**
          * Starts this service to perform action Foo with the given parameters. If
          * the service is already performing a task this action will be queued.
@@ -56,11 +65,10 @@ class ScannerService : IntentService("ScannerService") {
          */
         // TODO: Customize helper method
         @JvmStatic
-        fun Update(context: Context, param1: String, param2: String) {
+        fun Update(context: Context) {
             val intent = Intent(context, ScannerService::class.java).apply {
-                action = ACTION_FOO
-                putExtra(EXTRA_PARAM1, param1)
-                putExtra(EXTRA_PARAM2, param2)
+                action = ACTION_UPDATE
+                //putExtra(EXTRA_PARAM1, param1)
             }
             context.startService(intent)
         }

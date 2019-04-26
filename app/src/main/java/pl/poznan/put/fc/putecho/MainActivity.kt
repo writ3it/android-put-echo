@@ -1,6 +1,7 @@
 package pl.poznan.put.fc.putecho
 
 import android.content.Intent
+import android.net.wifi.ScanResult
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -9,9 +10,13 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import pl.poznan.put.fc.putecho.wifi.scanner.ScannerService
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import pl.poznan.put.fc.putecho.wifi.list.ScanResultAdapter
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -37,8 +42,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initalize() {
-        val intent = Intent(applicationContext, ScannerService::class.java)
-        startService(intent)
+        //ScannerService.Update(context = applicationContext)
+        testListOutput.adapter = ScanResultAdapter(
+            applicationContext,
+            R.layout.test_device_row,
+            ScannerService.EMPTY_RESULT
+        )
     }
 
     override fun onBackPressed() {
