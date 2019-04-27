@@ -3,15 +3,21 @@ package pl.poznan.put.fc.putecho.wifi.scanner
 import android.net.wifi.ScanResult
 import android.os.Parcel
 import android.os.Parcelable
+import kotlin.collections.ArrayList
 
-class WifiDevicesList(var data:ArrayList<ScanResult>?) : Parcelable{
+class WifiDevicesList() : Parcelable{
+    lateinit var data:List<RemoteDevice>
 
-    constructor(parcel: Parcel) : this() {
-        data = parcel.createTypedArrayList(ScanResult.CREATOR)
+    constructor(_data:List<ScanResult>) : this() {
+        data = _data.map { x -> RemoteDevice(x) }
+    }
+
+    constructor(parcel: Parcel) : this(emptyList()) {
+        data = parcel.createTypedArrayList(RemoteDevice.CREATOR)
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeTypedList(data)
+        parcel.writeTypedArray(data.toTypedArray(), flags)
     }
 
     override fun describeContents(): Int {
@@ -27,4 +33,6 @@ class WifiDevicesList(var data:ArrayList<ScanResult>?) : Parcelable{
             return arrayOfNulls(size)
         }
     }
+
+
 }

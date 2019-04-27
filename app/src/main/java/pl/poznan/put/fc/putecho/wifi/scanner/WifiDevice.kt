@@ -11,9 +11,10 @@ class WifiDevice( context:Context) : IWifiDeviceAdapter{
 
     override fun Scan(): WifiDevicesList {
         if (_manager.startScan()){
-            return WifiDevicesList(ArrayList(_manager.scanResults))
+            val result = _manager.scanResults
+            return WifiDevicesList( result )
         }
-        return WifiDevicesList(ArrayList(0))
+        return WifiDevicesList(emptyList())
     }
 
 

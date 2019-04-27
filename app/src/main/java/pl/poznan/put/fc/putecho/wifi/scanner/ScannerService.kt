@@ -29,7 +29,7 @@ class ScannerService : IntentService("ScannerService") {
 
     override fun onCreate() {
         super.onCreate()
-        device = WifiDevice()
+        device = WifiDevice(applicationContext)
     }
 
 
@@ -56,7 +56,7 @@ class ScannerService : IntentService("ScannerService") {
     companion object {
         const val BROADCAST_LIST_ACTION = "pl.poznan.put.fc.putecho.wifi.scanner.action.BROADCAST"
         const val SCANNER_RESULT_LIST = "pl.poznan.put.fc.putecho.wifi.scanner.action.UPDATE.RESULT"
-        const val EMPTY_RESULT = ArrayList<ScanResult>(0)
+        val EMPTY_RESULT = emptyList<RemoteDevice>()
         /**
          * Starts this service to perform action Foo with the given parameters. If
          * the service is already performing a task this action will be queued.
