@@ -33,6 +33,8 @@ class ScanResultAdapter(context: Context, layout_id:Int, id:Int,private var data
         var view = super.getView(position, convertView, parent)
         var textBox = view.findViewById<TextView>(resource)
         textBox.text = data[position].SSID
+        var power = view.findViewById<TextView>(R.id.list_entry_power)
+        power.text = data[position].Power
         return view
     }
 

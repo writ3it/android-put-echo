@@ -11,20 +11,24 @@ class RemoteDevice() : Parcelable {
         set(value){
             ssid = value
         }
+    lateinit var Power: String
 
     constructor(parcel: Parcel) : this() {
         val ssid:String? = parcel.readString()
         if (ssid!=null){
             SSID = ssid
         }
+        Power = parcel.readString()
     }
 
     constructor(result:ScanResult?) : this() {
         SSID = result!!.SSID
+        Power = result.level.toString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(SSID)
+        parcel.writeString(Power)
     }
 
     override fun describeContents(): Int {
