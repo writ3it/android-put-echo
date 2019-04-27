@@ -1,7 +1,9 @@
 package pl.poznan.put.fc.putecho
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -11,12 +13,15 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import pl.poznan.put.fc.putecho.wifi.scanner.ScannerService
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import pl.poznan.put.fc.putecho.wifi.list.ScanResultAdapter
+import pl.poznan.put.fc.putecho.wifi.list.ScanResultUpdater
+import pl.poznan.put.fc.putecho.wifi.scanner.WifiDevice
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -42,12 +47,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initalize() {
-        //ScannerService.Update(context = applicationContext)
-        testListOutput.adapter = ScanResultAdapter(
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(WifiDevice.REQUIRED_PERMISSION) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(arrayOf(WifiDevice.REQUIRED_PERMISSION),
+                WifiDevice.REQUIRED_PERMISSION_ID)
+            return
+        }
+        val adapter = ScanResultAdapter(
             applicationContext,
             R.layout.test_device_row,
-            ScannerService.EMPTY_RESULT
+            R.id.list_entry_title,
+            ScannerService.EMPTY_RESULT.toMutableList()
         )
+        testListOutput.adapter = adapter
+        ScannerService.Update(context = applicationContext, receiver = ScanResultUpdater(adapter))
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode != WifiDevice.REQUIRED_PERMISSION_ID) {
+            return
+        }
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            initalize()
+        } else {
+            Toast.makeText(this, "Uprawnienia są wymagane do działania aplikacji", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun onBackPressed() {
