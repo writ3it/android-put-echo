@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -61,7 +62,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ScannerService.EMPTY_RESULT.toMutableList()
         )
         testListOutput.adapter = adapter
-        ScannerService.Update(context = applicationContext, receiver = ScanResultUpdater(adapter))
+        val updater = ScanResultUpdater(adapter)
+        val handler = Handler()
+        val period = object : Runnable{
+            override fun run(){
+                ScannerService.Update(context = applicationContext, receiver = updater)
+                handler.postDelayed(this, 10000)
+            }
+        }
+        period.run()
 
     }
 
@@ -128,4 +137,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }
